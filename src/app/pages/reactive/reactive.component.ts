@@ -26,6 +26,10 @@ export class ReactiveComponent implements OnInit {
     return this.forma.get('pasatiempos') as FormArray;
   }
 
+  get clientes() {
+    return this.forma.get('clientes') as FormArray;
+  }
+
   get nombreInvalido() {
     return this.forma.get('nombre').invalid && this.forma.get('nombre').touched;
   }
@@ -78,7 +82,8 @@ export class ReactiveComponent implements OnInit {
         distrito: ['', Validators.required],
         ciudad: ['', Validators.required]
       }),
-      pasatiempos: this.formBuilder.array([])
+      pasatiempos: this.formBuilder.array([]),
+      clientes: this.formBuilder.array([this.createClient()])
     },
       //aqui vamos a poner los validadores syncronos o asyncronos a nivel formulario,
       {
@@ -86,6 +91,24 @@ export class ReactiveComponent implements OnInit {
         validators: [this.validadores.passwordsIguales('pass1', 'pass2')]
       });
   }
+
+  //crear un objeto dinamico en un formBuilderArray
+  createClient(): FormGroup {
+    return this.formBuilder.group({
+      nombre: '',
+      telefono: '',
+    });
+  }
+
+  //asi es como agregamos un nuevo cliente aqui
+  agregarClientes() {
+    this.clientes.push(this.createClient());
+  }
+
+  borrarCliente(i: number) {
+    this.pasatiempos.removeAt(i);
+  }
+
 
   agregarPasatiempo() {
     this.pasatiempos.push(this.formBuilder.control(''));
@@ -127,9 +150,11 @@ export class ReactiveComponent implements OnInit {
       { titulo: 'Jugar Futbol', descripcion: 'Ir a jugar futbol con mis amigos' },
       { titulo: 'Hacer Ejercicio', descripcion: 'Ir a hacer ejercicio al gimnasio' }
     ];
+
     //una forma de ***cargar los valores de default al array, pero hay que ver que mas formas hay de hacerlo
     ['pasatiempo 1', 'pasatiempo 2'].forEach((valor) => this.pasatiempos.push(this.formBuilder.control(valor)));
     //['pasatiempo1','pasatiepo 2'].forEach((objeto) => this.pasatiempos.push(this.formBuilder.control(objeto)));
+
     // for (let i = 0; i < defaultPasatiempos.length; i++) {
     //   console.log('defaultPasatiempos[i] ', defaultPasatiempos[i]);
     //   this.pasatiempos.push(this.formBuilder.control(defaultPasatiempos[i]))
@@ -154,6 +179,8 @@ export class ReactiveComponent implements OnInit {
 
   guardar() {
     console.log(this.forma);
+    //esta parte nos ayuda para modificar el estatus del input y cambiarlo a Touched
+    // y asi poder mostrar los mensajes de error que tenemos en la condicion
     if (this.forma.invalid) {
       Object.values(this.forma.controls).forEach(control => {
         if (control instanceof FormGroup) {
@@ -162,6 +189,7 @@ export class ReactiveComponent implements OnInit {
           control.markAllAsTouched();
         }
       });
+      console.info('el formulario es invalido, por que no has cumplido con las condiciones de llenado!');
     }
     //posteo de la informacion
     else {
