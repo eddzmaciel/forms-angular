@@ -106,7 +106,7 @@ export class ReactiveComponent implements OnInit {
   }
 
   borrarCliente(i: number) {
-    this.pasatiempos.removeAt(i);
+    this.clientes.removeAt(i);
   }
 
 
