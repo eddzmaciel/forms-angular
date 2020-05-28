@@ -43,4 +43,18 @@ export class TemplateComponent implements OnInit {
     }
   }
 
+  restaurarForm(forma: NgForm) {
+    //hacemos la referencia al formulario del template para resetear sus valores
+    //podemos pasarle nuevos valores o limpiar todo el objeto desde cero
+    const newUsuario = {
+      nombre: 'Tayde ',
+      apellido: 'Rumbo',
+      correo: 'tayde.rumbo@gmail.com',
+      pais: 'MEX',
+      genero: 'M'
+    }
+    //forma.reset(newUsuario);
+    forma.reset();
+  }
+
 }

@@ -14,6 +14,9 @@ export class ReactiveComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private validadores: ValidadoresService) {
     this.crearFormulario();
     this.cargarDataAlFormulario();
+    // llamamos esta function para suscribirnos a un observable
+    // que va a estar escuchando los cambios en los valores, estado del formulario o controles especificos (camposs)
+    this.crearListeners();
   }
 
   ngOnInit() {
@@ -33,6 +36,10 @@ export class ReactiveComponent implements OnInit {
     return this.forma.get('correo').invalid && this.forma.get('correo').touched;
   }
 
+  get usuarioNoValido() {
+    return this.forma.get('usuario').invalid && this.forma.get('usuario').touched;
+  }
+
   get ciudadInvalida() {
     return this.forma.get('direccion.ciudad').invalid && this.forma.get('direccion.ciudad').touched;
   }
@@ -50,14 +57,22 @@ export class ReactiveComponent implements OnInit {
   crearFormulario() {
     //esta es la definicion de un form control
     this.forma = this.formBuilder.group({
-      //[--valorPorDefault--,--validadoresSync--,--validadorAsync--]
+      //[--valorPorDefault--,--validadoresSync--,--validadorAsync--]s
+      /* 
+        en el orden de ejecucion primero se ejecutan las validaciones syncronas 
+        y al final se ejecutan las asyncronas
+      */
       //como hacer las validaciones
       nombre: ['', [Validators.required, Validators.minLength(5)]],
       //aqui ponemos nuestro validador personalizado que creamos,
       //pero no se ejecuta solo colocamos la referencia de la funcion
       apellido: ['', [Validators.required, this.validadores.noMaciel]],
+      //aqui colocamos un validador por patron
       correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
-      pass1: [Validators.required],
+      //aqui estamos agregando una validacion asyncrona, 
+      //siempre debe ser el 3er elemento que se coloca en la configuracion
+      usuario: ['', [], this.validadores.existeUsuario],
+      pass1: [Validators.required, Validators.minLength(5)],
       pass2: [Validators.required],
       direccion: this.formBuilder.group({
         distrito: ['', Validators.required],
@@ -69,7 +84,6 @@ export class ReactiveComponent implements OnInit {
       {
         //llamamos al validador  y les pasamos los nombres de los campos a validar
         validators: [this.validadores.passwordsIguales('pass1', 'pass2')]
-
       });
   }
 
@@ -81,21 +95,46 @@ export class ReactiveComponent implements OnInit {
     this.pasatiempos.removeAt(i);
   }
 
+  crearListeners() {
+    //se va a ejecutar este observable cada que haya un cambio de valor en el formulario
+    // this.forma.valueChanges.subscribe((valores) => {
+    //   console.log({ valores })
+    // });
+
+    //se va a ejecutar a este observable cada que haya un cambio en el estatus del formulario
+    // this.forma.statusChanges.subscribe((status) => {
+    //   console.log({ status });
+    // });
+
+    //este observable es cuando  un valor  (control ) espefico del formulario changes
+    this.forma.get('nombre').valueChanges.subscribe(console.log);
+  }
+
   cargarDataAlFormulario() {
     //si usas reset, puedes poner solo algunas propiedades del objeto
     this.forma.reset({
       nombre: "Edson",
       apellido: "Maciel2",
       correo: "edson.maciel@gmail.com",
+      pass1: '12345',
+      pass2: '12345',
       direccion: {
         distrito: "Buenos Aires",
         ciudad: "Lázaro Cárdenas"
       },
-    });
-
+    })
+    const defaultPasatiempos = [
+      { titulo: 'Jugar Futbol', descripcion: 'Ir a jugar futbol con mis amigos' },
+      { titulo: 'Hacer Ejercicio', descripcion: 'Ir a hacer ejercicio al gimnasio' }
+    ];
     //una forma de ***cargar los valores de default al array, pero hay que ver que mas formas hay de hacerlo
     ['pasatiempo 1', 'pasatiempo 2'].forEach((valor) => this.pasatiempos.push(this.formBuilder.control(valor)));
-
+    //['pasatiempo1','pasatiepo 2'].forEach((objeto) => this.pasatiempos.push(this.formBuilder.control(objeto)));
+    // for (let i = 0; i < defaultPasatiempos.length; i++) {
+    //   console.log('defaultPasatiempos[i] ', defaultPasatiempos[i]);
+    //   this.pasatiempos.push(this.formBuilder.control(defaultPasatiempos[i]))
+    // }
+    //this.pasatiempos.removeAt(0);
 
     //si usas setValue, tiene que contener todas las propiedades del objeto
     // this.forma.setValue({
