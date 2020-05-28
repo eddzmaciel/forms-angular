@@ -1,7 +1,15 @@
+
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-const routes: Routes = [];
+import { TemplateComponent } from './pages/template/template.component';
+import { ReactiveComponent } from './pages/reactive/reactive.component';
+
+const routes: Routes = [
+  { path: 'template', component: TemplateComponent },
+  { path: 'reactivo', component: ReactiveComponent },
+  { path: '**', pathMatch: 'full', redirectTo: 'reactivo' },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
