@@ -121,14 +121,16 @@
                 </thead>
                 <tbody formArrayName="clientes">
                     <tr *ngFor="let cliente of clientes.controls;let i = index" [formGroupName]="i">
-                        <td>{{i + 1}}</td>
-                        <td>
-                            <input type="form-control" type="text" formControlName="nombre">
-                        </td>
-                        <td>
-                            <input type="form-control" type="text" formControlName="telefono">
-                        </td>
-                        <td><button class="btn btn-danger" (click)="borrarCliente(i)">Borrar</button></td>
+                        <div [formGroupName]="i">
+                            <td>{{i + 1}}</td>
+                            <td>
+                                <input type="form-control" type="text" formControlName="nombre">
+                            </td>
+                            <td>
+                                <input type="form-control" type="text" formControlName="telefono">
+                            </td>
+                            <td><button class="btn btn-danger" (click)="borrarCliente(i)">Borrar</button></td>
+                        </div>
                     </tr>
                 </tbody>
             </table>
@@ -136,7 +138,6 @@
                 Cliente</button>
         </div>
     </div>
-
 
 
     <div class="form-group row">

@@ -19,6 +19,8 @@ export class ReactiveComponent implements OnInit {
     this.crearListeners();
   }
 
+
+
   ngOnInit() {
   }
 
@@ -153,6 +155,16 @@ export class ReactiveComponent implements OnInit {
 
     //una forma de ***cargar los valores de default al array, pero hay que ver que mas formas hay de hacerlo
     ['pasatiempo 1', 'pasatiempo 2'].forEach((valor) => this.pasatiempos.push(this.formBuilder.control(valor)));
+
+    const defaultClientes = [
+      {
+        nombre: 'Edson',
+        telefono: '883773',
+      },
+    ];
+
+    defaultClientes.forEach((cliente) => this.clientes.push(this.formBuilder.control(cliente)));
+
     //['pasatiempo1','pasatiepo 2'].forEach((objeto) => this.pasatiempos.push(this.formBuilder.control(objeto)));
 
     // for (let i = 0; i < defaultPasatiempos.length; i++) {
